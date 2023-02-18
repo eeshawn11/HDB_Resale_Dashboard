@@ -34,7 +34,7 @@ def retrieve_data(resource_id: str, n: int):
         print(url_string)
 
 
-@st.experimental_memo(show_spinner=False, ttl=2_630_000)  # dataset is updated monthly
+@st.cache_data(show_spinner=False, ttl=2_630_000)  # dataset is updated monthly
 def get_data():
     print("Fetching data")
     content = pd.DataFrame()
@@ -54,7 +54,7 @@ def get_data():
     return content
 
 
-@st.experimental_memo(max_entries=1)
+@st.cache_data(max_entries=1)
 def get_coords_df():
     return pd.read_csv(
         path+"/assets/hdb_coords.csv",
@@ -62,7 +62,7 @@ def get_coords_df():
     )
 
 
-@st.experimental_singleton
+@st.cache_data(max_entries=1)
 def get_chloropeth():
     with open(
         path+"/assets/master-plan-2014-planning-area-boundary-no-sea.json"
