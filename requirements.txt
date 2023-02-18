@@ -1,0 +1,8 @@
+numpy==1.22
+pandas==1.4.4
+regex==2022.7.9
+streamlit==1.16.0
+altair==4.2.0
+plotly==5.11.0
+shapely==2.0.0
+streamlit_extras==0.2.4
