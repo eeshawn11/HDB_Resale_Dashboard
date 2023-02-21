@@ -128,7 +128,7 @@ with st.sidebar:
         Created by Shawn
 
         - Happy to connect on [LinkedIn](https://www.linkedin.com/in/shawn-sing/)
-        - Project [repo](https://github.com/eeshawn11/HDB_Resale_Dashboard/)
+        - Project source [code](https://github.com/eeshawn11/HDB_Resale_Dashboard/)
         - Check out my other projects on [GitHub](https://github.com/eeshawn11/)
         """
     )
