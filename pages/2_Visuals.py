@@ -6,7 +6,17 @@ import plotly.express as px
 from decimal import Decimal
 from streamlit_extras.switch_page_button import switch_page
 
-st.set_page_config(layout="wide")
+st.set_page_config(
+    page_title="HDB Resale Price Dashboard",
+    page_icon="🏢",
+    layout="wide",
+    initial_sidebar_state="expanded",
+    menu_items={
+        "Report a bug": "https://github.com/eeshawn11/HDB_Resale_Dashboard/issues",
+        "About": "Thanks for dropping by!"
+        }
+    )
+    
 alt.data_transformers.enable("json")
 
 # return to home to fetch data 
@@ -125,9 +135,9 @@ with st.sidebar:
         """
         ---
         
-        Created by Shawn
+        Created by Sing Ee Shawn
 
-        - Happy to connect on [LinkedIn](https://www.linkedin.com/in/shawn-sing/)
+        - Say hi and connect on [LinkedIn](https://www.linkedin.com/in/shawn-sing/)!
         - Project source [code](https://github.com/eeshawn11/HDB_Resale_Dashboard/)
         - Check out my other projects on [GitHub](https://github.com/eeshawn11/)
         """
