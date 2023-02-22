@@ -1,4 +1,6 @@
-# [HDB Resale Price Dashboard](https://eeshawn-hdb-resale.streamlit.app/)
+# HDB Resale Price Dashboard
+
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://eeshawn-hdb-resale.streamlit.app/)
 
 This dashboard is inspired by [Inside Airbnb](http://insideairbnb.com/), and is an ongoing project to document my learning and experimentation with using Streamlit and various plotting libraries to create an interactive dashboard. While this could perhaps be more easily resolved by using PowerBI or Tableau, I am taking the opportunity to explore various Python libraries like `Altair` and `Plotly` while also getting used to reading API documentation.
 
