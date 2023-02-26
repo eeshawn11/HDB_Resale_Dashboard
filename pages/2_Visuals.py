@@ -135,11 +135,10 @@ with st.sidebar:
         """
         ---
         
-        Created by Sing Ee Shawn
+        Created by [**Shawn Sing**](https://www.linkedin.com/in/shawn-sing/)
 
-        - Say hi and connect on [LinkedIn](https://www.linkedin.com/in/shawn-sing/)!
-        - Project source [code](https://github.com/eeshawn11/HDB_Resale_Dashboard/)
-        - Check out my other projects on [GitHub](https://github.com/eeshawn11/)
+        - Project source [**code**](https://github.com/eeshawn11/HDB_Resale_Dashboard/)
+        - Check out my other projects on [**GitHub**](https://github.com/eeshawn11/)
         """
     )
 

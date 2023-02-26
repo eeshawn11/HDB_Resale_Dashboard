@@ -149,16 +149,18 @@ def transform_data(df):
 with st.sidebar:
     st.markdown(
         """
-        Created by Sing Ee Shawn
+        Created by [**Shawn Sing**](https://www.linkedin.com/in/shawn-sing/)
 
-        - Say hi and connect on [LinkedIn](https://www.linkedin.com/in/shawn-sing/)!
-        - Project source [code](https://github.com/eeshawn11/HDB_Resale_Dashboard/)
-        - Check out my other projects on [GitHub](https://github.com/eeshawn11/)
+        - Project source [**code**](https://github.com/eeshawn11/HDB_Resale_Dashboard/)
+        - Check out my other projects on [**GitHub**](https://github.com/eeshawn11/)
         """
     )
 
 with st.container():
     st.title("Singapore HDB Resale Price from 2000")
+    st.image("./assets/nathan-oh-PWIOX6atM4w-unsplash.jpg")
+    st.markdown("<p style='text-align: center;'>Photo by <a href='https://unsplash.com/fr/@nathanohk' target='_blank'>Nathan Oh</a> on <a href='https://unsplash.com/photos/PWIOX6atM4w' target='_blank'>Unsplash</a></p>", unsafe_allow_html=True)
+  
     st.markdown(
         """
         This dashboard is inspired by [Inside Airbnb](http://insideairbnb.com/) and various other dashboards I've come across on the web. 
