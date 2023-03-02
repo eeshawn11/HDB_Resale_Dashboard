@@ -10,9 +10,9 @@ Helper functions to fetch data through Data.gov.sg API.
 
 resource_ids = [
     "f1765b54-a209-4718-8d38-a39237f502b3", # from Jan 2017 onwards
-    "1b702208-44bf-4829-b620-4615ee19b57c", # 2015 - 2016
-    "83b2fc37-ce8c-4df4-968b-370fd818138b", # Mar 2012 - 2014
-    "8c00bf08-9124-479e-aeca-7cc411d884c4", # 2000 - Feb 2012
+    # "1b702208-44bf-4829-b620-4615ee19b57c", # 2015 - 2016
+    # "83b2fc37-ce8c-4df4-968b-370fd818138b", # Mar 2012 - 2014
+    # "8c00bf08-9124-479e-aeca-7cc411d884c4", # 2000 - Feb 2012
 ]
 
 path = os.path.dirname(__file__)
