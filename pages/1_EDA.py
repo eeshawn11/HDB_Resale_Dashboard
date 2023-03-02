@@ -3,9 +3,6 @@ import streamlit as st
 import plotly.express as px
 import altair as alt
 from streamlit_extras.switch_page_button import switch_page
-import matplotlib.pyplot as plt
-import seaborn as sns
-sns.set()
 
 st.set_page_config(
     page_title="HDB Resale Price Dashboard",

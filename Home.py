@@ -1,10 +1,6 @@
 import pandas as pd
 import streamlit as st
-# import requests
-# import json
 from shapely.geometry import Point, Polygon
-# import time
-# import os
 import fetch as f
 
 st.set_page_config(
@@ -18,67 +14,6 @@ st.set_page_config(
         }
     )
 
-# resource_ids = [
-#     "f1765b54-a209-4718-8d38-a39237f502b3", # from Jan 2017 onwards
-#     "1b702208-44bf-4829-b620-4615ee19b57c", # 2015 - 2016
-#     "83b2fc37-ce8c-4df4-968b-370fd818138b", # Mar 2012 - 2014
-#     "8c00bf08-9124-479e-aeca-7cc411d884c4", # 2000 - Feb 2012
-# ]
-
-# path = os.path.dirname(__file__)
-
-# def retrieve_data(resource_id: str, n: int):
-#     url_string = f"https://data.gov.sg/api/action/datastore_search?resource_id={resource_id}&limit={n}"
-#     try:
-#         response = requests.get(
-#             url_string, headers={"User-Agent": "Mozilla/5.0"}, timeout=20
-#         ).json()
-#         if response["success"] == True:
-#             print("Call success")
-#             return response
-#         elif response["success"] == False:
-#             print("Call failed")
-#     except Exception as e:
-#         print(f"Error occurred: {e}")
-#         print(e)
-#         print(url_string)
-
-
-# @st.cache_data(show_spinner=False, ttl=2_630_000)  # dataset is updated monthly
-# def get_data():
-#     print("Fetching data")
-#     content = pd.DataFrame()
-#     for resource_id in resource_ids:
-#         time.sleep(1)
-#         try:
-#             print(f"First call to {resource_id}")
-#             body = retrieve_data(resource_id, 1)
-#             limit = body["result"]["total"]
-#             print(f"Second call, retrieving {limit:,} records")
-#             body = retrieve_data(resource_id, limit)
-#             resource_df = pd.DataFrame(body["result"]["records"])
-#             content = pd.concat([content, resource_df], ignore_index=True)
-#         except:
-#             print(f"Error: {resource_id} unsuccessful")
-#     print(f"Retrieval complete! {content.shape[0]:,} records retrieved.")
-#     return content
-
-
-# @st.cache_data(show_spinner=False, max_entries=1)
-# def get_coords_df():
-#     return pd.read_csv(
-#         path+"/assets/hdb_coords.csv",
-#         index_col="address"
-#     )
-
-
-# @st.cache_data(show_spinner=False, max_entries=1)
-# def get_chloropeth():
-#     with open(
-#         path+"/assets/master-plan-2014-planning-area-boundary-no-sea.json"
-#     ) as f:
-#         return json.load(f)
-
 @st.cache_data(show_spinner=False, ttl=2_630_000)  # dataset is updated monthly
 def load_data():
     df = f.get_data()
@@ -88,17 +23,12 @@ def load_data():
 
 with st.spinner("Fetching data..."):
     df, hdb_coordinates, geo_df = load_data()
-    # df = f.get_data()
-    # hdb_coordinates = f.get_coords_df()
 
 if "geo_df" not in st.session_state:
         st.session_state.geo_df = geo_df
 
 if "df_raw" not in st.session_state:
     st.session_state.df_raw = df.head(10)
-
-# if "geo_df" not in st.session_state:
-#     st.session_state.geo_df = f.get_chloropeth()
 
 
 def get_planning_areas():
@@ -224,50 +154,3 @@ with st.container():
         with many flats even crossing the S$1 million mark.
         """
     )
-
-# st.markdown("---")
-
-# with st.container():
-#     st.markdown("## Data Retrieval")
-#     st.markdown(
-#         "We utilise the Data.gov.sg API to extract our required data. Let's check out the dataset to see what it includes."
-#     )
-#     st.dataframe(df.head(3), use_container_width=True)
-#     st.markdown(
-#         """
-#         The dataset provides key information regarding the resale transactions since 2012, including location, flat type and lease information. The information 
-#         is generally clean, although we will still need to perform some transformations for use in our visualisations.
-
-#         Notes from the dataset:
-        
-#         > - The data excludes any transactions that may not reflect the full market price such as resale between relatives or resale of part shares.
-#         >
-#         > - Transactions from March 2012 onwards are based on the date of registration, while those before are based on the date of approval.
-#         """
-#     )
-#     st.markdown(
-#         f"Checking the shape of the dataframe, we currently have `{df.shape[0]:,}` rows, each of which represents a unique resale transaction."
-#     )
-
-# st.markdown("---")
-
-# with st.container():
-#     st.markdown(
-#         """
-#         - Combining `block` and `street_name` into a new `address` column, I then utilised a free [OneMap API](https://www.onemap.gov.sg/docs/) provided by the Singapore Land Authority to retrieve the `latitude` and `longitude` coordinates of these addresses for plotting onto a map.
-#         - The older datasets did not include a `remaining_lease` column, but it's easy to calculate based on the standard 99-year HDB leases.
-#         - The `town` column does not correspond fully to the planning areas within the choropeth, so we'll check and rename towns within the dataset based the choropeth.        
-#         - There are transactions in HDB blocks that have since been [reacquired]((https://www.hdb.gov.sg/residential/living-in-an-hdb-flat/sers-and-upgrading-programmes/sers/sers-projects/completed-sers-projects)) by the state, such as 1A & 2A Woodlands Centre Road, which do not show up in the OneMap API, but interestingly are still appearing in Google Maps. This meant having to extract a list of these locations and looking up their *approximate* location manually.
-#         """
-#     )
-
-
-# st.markdown("---")
-
-# with st.container():
-#     st.markdown(
-#         """
-#         After performing the transformations on the data, notice the new columns that have been added and we are ready to move on with visualisations.
-#         """
-#     )
-    # st.dataframe(st.session_state.df.head(3), use_container_width=True)
