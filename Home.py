@@ -14,7 +14,7 @@ st.set_page_config(
         }
     )
 
-@st.cache_data(show_spinner=False, ttl=2_630_000)  # dataset is updated monthly
+@st.cache_data(show_spinner=False, max_entries=1, ttl=2_630_000)  # dataset is updated monthly
 def load_data():
     df = f.get_data()
     hdb_coordinates = f.get_coords_df()
@@ -28,9 +28,9 @@ if "geo_df" not in st.session_state:
         st.session_state.geo_df = geo_df
 
 if "df_raw" not in st.session_state:
-    st.session_state.df_raw = df.head(10)
+    st.session_state.df_raw = df.head(10).copy()
 
-
+@st.cache_data(show_spinner=False)
 def get_planning_areas():
     planning_areas = []
     polygons = []
@@ -56,6 +56,7 @@ def get_planning_areas():
 
 planning_areas, polygons = get_planning_areas()
 
+@st.cache_data(show_spinner=False)
 def generate_point(coordinates):
     return Point(coordinates[1], coordinates[0])
 
@@ -64,6 +65,7 @@ def check_polygons(point):
         if area.contains(point):
             return planning_areas[index]
 
+@st.cache_data(show_spinner=False)
 def find_unique_locations(dataframe) -> dict:
     town_map = {}
     for address in dataframe["address"].unique():
@@ -72,7 +74,7 @@ def find_unique_locations(dataframe) -> dict:
     return town_map
 
 
-@st.cache_data(ttl=3600, show_spinner="Transforming data...")
+@st.cache_data(ttl=2_630_000, show_spinner="Transforming data...")
 def transform_data(df):
     df["address"] = df["block"] + " " + df["street_name"]
     df_merged = df.merge(hdb_coordinates, how="left", on="address")

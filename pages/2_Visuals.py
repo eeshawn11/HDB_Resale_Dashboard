@@ -187,172 +187,183 @@ index_benchmark = 400000 # price as of Jan 2020
 resale_transactions_df["price_index"] = resale_transactions_df["resale_price"] / index_benchmark * 100
 resale_transactions_df[["resale_price", "price_index"]] = resale_transactions_df[["resale_price", "price_index"]].round(0).astype("int32")
 
-## choropleth
-median_map_plot = px.choropleth_mapbox(
-    choropleth_df,
-    geojson=st.session_state.geo_df,
-    locations="town",
-    color="resale_price",
-    featureidkey="properties.PLN_AREA_N",
-    color_continuous_scale="burg",
-    center={"lat": 1.35, "lon": 103.80},
-    opacity=0.8,
-    hover_name="town",
-    hover_data={
-        "town": False,
-        "transactions": ":,",
-        "resale_price": ":,"
-    },
-    labels={"town": "Town", "transactions": "Transactions", "resale_price": "Median Resale Price"},
-).update_layout(
-    title={
-        "text": f"{year_option} Median Resale Price by Town",
-        "xanchor": "left",
-    },
-    height=600,
-    mapbox={
-        "accesstoken": st.secrets["mapbox_token"],
-        "style": "streets",
-        "zoom": 10,
-        "bounds": {"west": 103.5, "east": 104.2, "north": 1.55, "south": 1.15} # not working locally
-    },
-    coloraxis_colorbar={
-        "title": None,
-        "y": 0.5,
-        "yanchor": "middle",
-        "len": 1,
-        "ypad": 0,
-        "xpad": 0
-    }
-)
+# @st.cache_data(max_entries=10)
+def gen_median_map_plot():
+    ## choropleth
+    median_map_plot = px.choropleth_mapbox(
+        choropleth_df,
+        geojson=st.session_state.geo_df,
+        locations="town",
+        color="resale_price",
+        featureidkey="properties.PLN_AREA_N",
+        color_continuous_scale="burg",
+        center={"lat": 1.35, "lon": 103.80},
+        opacity=0.8,
+        hover_name="town",
+        hover_data={
+            "town": False,
+            "transactions": ":,",
+            "resale_price": ":,"
+        },
+        labels={"town": "Town", "transactions": "Transactions", "resale_price": "Median Resale Price"},
+    ).update_layout(
+        title={
+            "text": f"{year_option} Median Resale Price by Town",
+            "xanchor": "left",
+        },
+        height=600,
+        mapbox={
+            "accesstoken": st.secrets["mapbox_token"],
+            "style": "streets",
+            "zoom": 10,
+            "bounds": {"west": 103.5, "east": 104.2, "north": 1.55, "south": 1.15} # not working locally
+        },
+        coloraxis_colorbar={
+            "title": None,
+            "y": 0.5,
+            "yanchor": "middle",
+            "len": 1,
+            "ypad": 0,
+            "xpad": 0
+        }
+    )
 
-median_map_plot.add_scattermapbox(
-    below="",
-    lat=million_dollar_flats_df["latitude"],
-    lon=million_dollar_flats_df["longitude"],
-    text=million_dollar_flats_df["text"],
-    mode="markers",
-    marker={"symbol": "star", "size": 5, "opacity": 0.9, "allowoverlap": True},
-    hovertemplate="<b>Million-Dollar Flat</b><br><br>"
-    + "%{text}"
-    + "<extra></extra>",
-    hoverlabel={
-        "bgcolor": "snow",
-        "font_color" : "black"
-    },
-)
+    median_map_plot.add_scattermapbox(
+        below="",
+        lat=million_dollar_flats_df["latitude"],
+        lon=million_dollar_flats_df["longitude"],
+        text=million_dollar_flats_df["text"],
+        mode="markers",
+        marker={"symbol": "star", "size": 5, "opacity": 0.9, "allowoverlap": True},
+        hovertemplate="<b>Million-Dollar Flat</b><br><br>"
+        + "%{text}"
+        + "<extra></extra>",
+        hoverlabel={
+            "bgcolor": "snow",
+            "font_color" : "black"
+        },
+    )
 
-# Add buttons for control
-median_map_plot.update_layout(
-    updatemenus=[
-        dict(
-            type = "buttons",
-            direction = "right",
-            buttons=list([
-                dict(
-                    args=["mapbox_style", "streets"],
-                    label="Streets",
-                    method="relayout"
-                ),
-                dict(
-                    args=["mapbox_style", "dark"],
-                    label="Dark",
-                    method="relayout"
-                )
-            ]),
-            pad={"r": 10, "t": 10},
-            showactive=True,
-            x=0.05,
-            xanchor="left",
-            y=-0.07,
-            yanchor="bottom",
-            visible=False # hide while buttons not working
-        ),
-        dict(
-            type = "buttons",
-            direction = "right",
-            buttons=list([
-                dict(
-                    args=["color", "resale_price"],
-                    label="Median Price",
-                    method="restyle"
-                ),
-                dict(
-                    args=["color", "transactions"],
-                    label="Transactions",
-                    method="restyle"
-                )
-            ]),
-            pad={"r": 10, "t": 10},
-            showactive=True,
-            x=0.05,
-            xanchor="left",
-            y=-0.14,
-            yanchor="bottom",
-            visible=False # hide while buttons not working
-        ),
-    ],
-    overwrite=True
-)
+    # Add buttons for control
+    median_map_plot.update_layout(
+        updatemenus=[
+            dict(
+                type = "buttons",
+                direction = "right",
+                buttons=list([
+                    dict(
+                        args=["mapbox_style", "streets"],
+                        label="Streets",
+                        method="relayout"
+                    ),
+                    dict(
+                        args=["mapbox_style", "dark"],
+                        label="Dark",
+                        method="relayout"
+                    )
+                ]),
+                pad={"r": 10, "t": 10},
+                showactive=True,
+                x=0.05,
+                xanchor="left",
+                y=-0.07,
+                yanchor="bottom",
+                visible=False # hide while buttons not working
+            ),
+            dict(
+                type = "buttons",
+                direction = "right",
+                buttons=list([
+                    dict(
+                        args=["color", "resale_price"],
+                        label="Median Price",
+                        method="restyle"
+                    ),
+                    dict(
+                        args=["color", "transactions"],
+                        label="Transactions",
+                        method="restyle"
+                    )
+                ]),
+                pad={"r": 10, "t": 10},
+                showactive=True,
+                x=0.05,
+                xanchor="left",
+                y=-0.14,
+                yanchor="bottom",
+                visible=False # hide while buttons not working
+            ),
+        ],
+        overwrite=True
+    )
 
-# Add annotation
-median_map_plot.update_layout(
-    annotations=[
-        dict(
-            text="Map style:", 
-            showarrow=False,
-            x=0, 
-            y=-0.06, 
-            yref="paper", 
-            align="left"),
-        dict(
-            text="Overlay:", 
-            showarrow=False,
-            x=0,
-            y=-0.13, 
-            yref="paper", 
-            align="left")
-    ],
-)
+    # Add annotation
+    median_map_plot.update_layout(
+        annotations=[
+            dict(
+                text="Map style:", 
+                showarrow=False,
+                x=0, 
+                y=-0.06, 
+                yref="paper", 
+                align="left"),
+            dict(
+                text="Overlay:", 
+                showarrow=False,
+                x=0,
+                y=-0.13, 
+                yref="paper", 
+                align="left")
+        ],
+    )
 
-transaction_map_plot = px.choropleth_mapbox(
-    choropleth_df,
-    geojson=st.session_state.geo_df,
-    locations="town",
-    color="age",
-    featureidkey="properties.PLN_AREA_N",
-    color_continuous_scale="mint",
-    center={"lat": 1.35, "lon": 103.80},
-    opacity=0.8,
-    hover_name="town",
-    hover_data={
-        "town": False,
-        "age": True,
-        "resale_price": ":,",
-    },
-    labels={"town": "Town", "age": "Median Age", "resale_price": "Median Resale Price"},
-).update_layout(
-    title={
-        "text": f"{year_option} Median Age of Property at Transaction",
-        "x": 0.5,
-        "xanchor": "center",
-    },
-    height=600,
-    mapbox={
-        "accesstoken": st.secrets["mapbox_token"],
-        "style": "streets",
-        "zoom": 10,
-        "bounds": {"west": 103.5, "east": 104.2, "north": 1.55, "south": 1.15} # not working locally
-    },
-    coloraxis_colorbar={
-        "title": None,
-        "y": 0.5,
-        "yanchor": "middle",
-        "len": 1,
-        "ypad": 0,
-        "xpad": 0
-    }
-)
+    return median_map_plot
+
+# @st.cache_data(max_entries=10)
+def gen_transaction_map_plot():
+    transaction_map_plot = px.choropleth_mapbox(
+        choropleth_df,
+        geojson=st.session_state.geo_df,
+        locations="town",
+        color="age",
+        featureidkey="properties.PLN_AREA_N",
+        color_continuous_scale="mint",
+        center={"lat": 1.35, "lon": 103.80},
+        opacity=0.8,
+        hover_name="town",
+        hover_data={
+            "town": False,
+            "age": True,
+            "resale_price": ":,",
+        },
+        labels={"town": "Town", "age": "Median Age", "resale_price": "Median Resale Price"},
+    ).update_layout(
+        title={
+            "text": f"{year_option} Median Age of Property at Transaction",
+            "x": 0.5,
+            "xanchor": "center",
+        },
+        height=600,
+        mapbox={
+            "accesstoken": st.secrets["mapbox_token"],
+            "style": "streets",
+            "zoom": 10,
+            "bounds": {"west": 103.5, "east": 104.2, "north": 1.55, "south": 1.15} # not working locally
+        },
+        coloraxis_colorbar={
+            "title": None,
+            "y": 0.5,
+            "yanchor": "middle",
+            "len": 1,
+            "ypad": 0,
+            "xpad": 0
+        }
+    )
+
+    return transaction_map_plot
+
+median_map_plot = gen_median_map_plot()
+transaction_map_plot = gen_transaction_map_plot()
 
 ## line plots
 transactions_base = (
