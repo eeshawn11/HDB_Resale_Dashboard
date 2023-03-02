@@ -1,9 +1,12 @@
 import requests
 import json
-from shapely.geometry import Point, Polygon
 import time
 import os
 import pandas as pd
+
+"""
+Helper functions to fetch data through Data.gov.sg API.
+"""
 
 resource_ids = [
     "f1765b54-a209-4718-8d38-a39237f502b3", # from Jan 2017 onwards
