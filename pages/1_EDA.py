@@ -1,7 +1,9 @@
 import pandas as pd
 import streamlit as st
 import plotly.express as px
+import altair as alt
 from streamlit_extras.switch_page_button import switch_page
+import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set()
 
@@ -16,9 +18,42 @@ st.set_page_config(
         }
     )
 
+def add_marker(base_chart, nearest, tooltip_y_val:str, tooltip_y_title:str, tooltip_y_format:str):
+    '''
+    Adds a selector indicator and rule to altair chart
+    '''
+    # selectors that tell us the x-value of the cursor
+    selector = (
+        base_chart.mark_point(color="red")
+        .encode(
+            x="date",
+            opacity=alt.condition(nearest, alt.value(1), alt.value(0)),
+            tooltip=[
+                alt.Tooltip("date", title="Transaction Period", format="%b-%y"),
+                alt.Tooltip(
+                    tooltip_y_val, title=tooltip_y_title, format=tooltip_y_format
+                ),
+            ]
+        )
+        .add_selection(nearest)
+    )
+
+    # draw a rule at location of selection
+    rule = (
+        base_chart.mark_rule(color="gray")
+        .encode(x="date")
+        .transform_filter(nearest)
+    )
+
+    return selector, rule
+
 # return to home to fetch data 
 if "df" not in st.session_state or "df_raw" not in st.session_state:
     switch_page("Home")
+
+# flat type distribution
+flat_type_df = st.session_state.df[["flat_type", "floor_area_sqm"]].copy()
+flat_type_df["flat_type"] = flat_type_df["flat_type"].replace({"MULTI-GENERATION": "EXECUTIVE*", "EXECUTIVE": "EXECUTIVE*"})
 
 with pd.option_context("display.float_format", "${:,.2f}".format):
     resale_price_table = st.session_state.df.groupby(["town", "flat_type"]).resale_price.median().reset_index()
@@ -86,6 +121,46 @@ remaining_lease_plot = px.histogram(
     height=450,
 )
 
+flat_type_selector = alt.selection_multi(empty="all", fields=["flat_type"])
+
+flat_base = alt.Chart(
+    flat_type_df,
+).add_selection(flat_type_selector)
+
+flat_type_plot = (
+    flat_base.mark_bar()
+    .encode(
+        alt.X("count()", axis=alt.Axis(title="Transactions")),
+        alt.Y("flat_type:N", axis=alt.Axis(title="Flat Type")),
+        color=alt.condition(
+            flat_type_selector, "flat_type:N", alt.value("lightgray"), legend=None
+        ),
+        tooltip=[
+            alt.Tooltip("flat_type", title="Flat Type"),
+            alt.Tooltip("count()", title="Transactions", format=","),
+        ],
+    )
+    .properties(height=250, title="Transactions by Flat Type")
+)
+
+floor_area_plot = (
+    flat_base.mark_bar(opacity=0.8, binSpacing=0)
+    .encode(
+        alt.X(
+            "floor_area_sqm:Q",
+            bin=alt.Bin(step=5),
+            axis=alt.Axis(title="Floor Area (sqm)"),
+        ),
+        alt.Y("count()", stack=None, axis=alt.Axis(title="Count")),
+        alt.Color("flat_type:N", legend=None),
+    )
+    .transform_filter(flat_type_selector)
+    .properties(
+        height=250,
+        title="Distribution of Floor Area by Flat Type"
+    )
+)
+
 with st.sidebar:
     st.markdown(
         """
@@ -98,14 +173,6 @@ with st.sidebar:
 
 with st.container():
     st.title("Singapore HDB Resale Price from 2000")
-#     st.markdown(
-#         """
-#         After collecting our data, let's have a sense of what our data looks like.
-#         """
-#     )
-#     st.markdown("---")
-
-# with st.container():
     st.markdown("## Data Retrieval")
     st.markdown(
         "We utilise the Data.gov.sg API to extract our required data. Let's check out the dataset to see what it includes."
@@ -175,7 +242,7 @@ with st.container():
         HDBs are public housing after all and the government would want to try to keep prices affordable, although we do see a growing trend of 'million dollar flats' as evidenced by the long tail.
         
         Interestingly, 3 ROOM and 4 ROOM flats in particular have a bimodal distribution. 
-        From the yearly charts, we see prices remained relatively stable from 2000 - 2007, before prices started to rise and settle after 2013.
+        From the yearly charts, we see prices remained relatively stable from 2000 - 2007, before prices started to rise and settled after 2013.
         """
     )
     st.markdown("---")
@@ -193,8 +260,15 @@ with st.container():
         Given the 99-year leases for HDB flats, it should be unsurprising to see a spike in transactions for flats with over 90 years lease remaining.
         These flats are new BTOs that become available on the market after the 5-year Minimum Occupation Period (MOP).
 
-        Interestingly, we see a bimodal distribution with a second lower peak around the 80 years region. 
+        Interestingly, we see a bimodal distribution with a second lower peak closer to the 80 years region. 
         I am wondering if this could perhaps be related to new buyers in their 20s who opt to purchase a resale flat instead of waiting for BTO instead?
         """
     )
+    st.markdown("---")
+
+with st.container():
+    st.markdown("Click to filter by flat types, hold shift to select multiple options.")
+    # use_container_width currently does not seem to work for concatenated charts
+    st.altair_chart(flat_type_plot | floor_area_plot, use_container_width=True)
+    st.markdown("\* Includes Multi-Generation flats")
     st.markdown("---")

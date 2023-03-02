@@ -188,9 +188,9 @@ index_benchmark = 400000 # price as of Jan 2020
 resale_transactions_df["price_index"] = resale_transactions_df["resale_price"] / index_benchmark * 100
 resale_transactions_df[["resale_price", "price_index"]] = resale_transactions_df[["resale_price", "price_index"]].round(0).astype("int32")
 # flat type distribution
-flat_type_df = df_filtered[["flat_type", "floor_area_sqm"]].copy()
-flat_type_df["flat_type"] = flat_type_df["flat_type"].str.replace("MULTI-GENERATION", "EXECUTIVE")
-flat_type_df["flat_type"] = flat_type_df["flat_type"].str.replace("EXECUTIVE", "EXECUTIVE*")
+# flat_type_df = df_filtered[["flat_type", "floor_area_sqm"]].copy()
+# flat_type_df["flat_type"] = flat_type_df["flat_type"].str.replace("MULTI-GENERATION", "EXECUTIVE")
+# flat_type_df["flat_type"] = flat_type_df["flat_type"].str.replace("EXECUTIVE", "EXECUTIVE*")
 
 ## choropleth
 median_map_plot = px.choropleth_mapbox(
@@ -219,7 +219,7 @@ median_map_plot = px.choropleth_mapbox(
         "accesstoken": st.secrets["mapbox_token"],
         "style": "streets",
         "zoom": 10,
-        "bounds": {"west": 103.5, "east": 104.2, "north": 1.55, "south": 1.15} # not working locally
+        # "bounds": {"west": 103.5, "east": 104.2, "north": 1.55, "south": 1.15} # not working locally
     },
     coloraxis_colorbar={
         "title": None,
@@ -347,7 +347,7 @@ transaction_map_plot = px.choropleth_mapbox(
         "accesstoken": st.secrets["mapbox_token"],
         "style": "streets",
         "zoom": 10,
-        "bounds": {"west": 103.5, "east": 104.2, "north": 1.55, "south": 1.15} # not working locally
+        # "bounds": {"west": 103.5, "east": 104.2, "north": 1.55, "south": 1.15} # not working locally
     },
     coloraxis_colorbar={
         "title": None,
@@ -459,46 +459,46 @@ median_price_base = (
 median_price_selector, median_price_rule = add_marker(median_price_base, alt_nearest, "resale_price", "Median Resale Price", "$,")
 median_price_plot = median_price_base + median_price_selector + median_price_rule
 
-flat_type_selector = alt.selection_multi(empty="all", fields=["flat_type"])
+# flat_type_selector = alt.selection_multi(empty="all", fields=["flat_type"])
 
-flat_base = alt.Chart(
-    flat_type_df,
-).add_selection(flat_type_selector)
+# flat_base = alt.Chart(
+#     flat_type_df,
+# ).add_selection(flat_type_selector)
 
-flat_type_plot = (
-    flat_base.mark_bar()
-    .encode(
-        alt.X("count()", axis=alt.Axis(title="Transactions")),
-        alt.Y("flat_type:N", axis=alt.Axis(title="Flat Type")),
-        color=alt.condition(
-            flat_type_selector, "flat_type:N", alt.value("lightgray"), legend=None
-        ),
-        tooltip=[
-            alt.Tooltip("flat_type", title="Flat Type"),
-            alt.Tooltip("count()", title="Transactions", format=","),
-        ],
-    )
-    .properties(height=250, width=400, title="Transactions by Flat Type")
-)
+# flat_type_plot = (
+#     flat_base.mark_bar()
+#     .encode(
+#         alt.X("count()", axis=alt.Axis(title="Transactions")),
+#         alt.Y("flat_type:N", axis=alt.Axis(title="Flat Type")),
+#         color=alt.condition(
+#             flat_type_selector, "flat_type:N", alt.value("lightgray"), legend=None
+#         ),
+#         tooltip=[
+#             alt.Tooltip("flat_type", title="Flat Type"),
+#             alt.Tooltip("count()", title="Transactions", format=","),
+#         ],
+#     )
+#     .properties(height=250, width=400, title="Transactions by Flat Type")
+# )
 
-floor_area_plot = (
-    flat_base.mark_bar(opacity=0.8, binSpacing=0)
-    .encode(
-        alt.X(
-            "floor_area_sqm:Q",
-            bin=alt.Bin(step=5),
-            axis=alt.Axis(title="Floor Area (sqm)"),
-        ),
-        alt.Y("count()", stack=None, axis=alt.Axis(title="Count")),
-        alt.Color("flat_type:N", legend=None),
-    )
-    .transform_filter(flat_type_selector)
-    .properties(
-        height=250, 
-        width=400, 
-        title="Distribution of Floor Area by Flat Type"
-    )
-)
+# floor_area_plot = (
+#     flat_base.mark_bar(opacity=0.8, binSpacing=0)
+#     .encode(
+#         alt.X(
+#             "floor_area_sqm:Q",
+#             bin=alt.Bin(step=5),
+#             axis=alt.Axis(title="Floor Area (sqm)"),
+#         ),
+#         alt.Y("count()", stack=None, axis=alt.Axis(title="Count")),
+#         alt.Color("flat_type:N", legend=None),
+#     )
+#     .transform_filter(flat_type_selector)
+#     .properties(
+#         height=250, 
+#         width=400, 
+#         title="Distribution of Floor Area by Flat Type"
+#     )
+# )
 
 million_dollar_scatter = px.scatter(
         df_filtered.query("resale_price >= 1_000_000"),
@@ -661,12 +661,12 @@ with row2_tab2:
 with row2_tab3:
     st.plotly_chart(million_dollar_scatter, use_container_width=True)
 
-with st.container():
-    st.markdown("Click to filter by flat types, hold shift to select multiple options.")
-    # use_container_width currently does not seem to work for concatenated charts
-    st.altair_chart(flat_type_plot | floor_area_plot, use_container_width=True)
-    st.markdown("\* Includes Multi-Generation flats")
-    st.markdown("---")
+# with st.container():
+#     st.markdown("Click to filter by flat types, hold shift to select multiple options.")
+#     # use_container_width currently does not seem to work for concatenated charts
+#     st.altair_chart(flat_type_plot | floor_area_plot, use_container_width=True)
+#     st.markdown("\* Includes Multi-Generation flats")
+#     st.markdown("---")
 
 with st.container():
     st.plotly_chart(density_heatmap_plot, use_container_width=True)
