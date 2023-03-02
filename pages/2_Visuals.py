@@ -50,7 +50,8 @@ def get_delta(var:str, type:str) -> str:
             delta = (df_filtered[var].max() - df_filtered_previous_year[var].max())
         elif type == "median":
             delta = (df_filtered[var].median() - df_filtered_previous_year[var].median())
-        return f"{numerize(delta)} vs {year_option-1}" 
+        return f"{numerize(delta)} vs {year_option-1}"
+    return None
 
 def round_num(n, decimals):
     return n.to_integral() if n == n.to_integral() else round(n.normalize(), decimals)
@@ -575,7 +576,7 @@ with st.container():
     met3.metric(
         label="Million Dollar Flats",
         value=f"{million_dollar_flats_df['address'].count():,}",
-        help="Total Million Dollar Flats transacted during this period"
+        help="Total Million Dollar Flats transacted during this period",
     )
     # row 2
     met4, met5, met6 = st.columns(3)
