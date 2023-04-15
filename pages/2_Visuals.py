@@ -134,13 +134,13 @@ with st.sidebar:
     st.markdown(
         """
         ---
-        
-        Created by [**Shawn Sing**](https://www.linkedin.com/in/shawn-sing/)
+        Created by [**eeshawn**](https://eeshawn.com)
 
+        - Connect on [**LinkedIn**](https://www.linkedin.com/in/shawn-sing/)
         - Project source [**code**](https://github.com/eeshawn11/HDB_Resale_Dashboard/)
         - Check out my other projects on [**GitHub**](https://github.com/eeshawn11/)
         """
-    )
+        )
 
 # filter df based on selected parameters
 if town_option == "All Towns":

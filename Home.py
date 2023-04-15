@@ -105,12 +105,13 @@ if "df" not in st.session_state:
 with st.sidebar:
     st.markdown(
         """
-        Created by [**Shawn Sing**](https://www.linkedin.com/in/shawn-sing/)
+        Created by [**eeshawn**](https://eeshawn.com)
 
+        - Connect on [**LinkedIn**](https://www.linkedin.com/in/shawn-sing/)
         - Project source [**code**](https://github.com/eeshawn11/HDB_Resale_Dashboard/)
         - Check out my other projects on [**GitHub**](https://github.com/eeshawn11/)
         """
-    )
+        )
 
 with st.container():
     st.title("Singapore HDB Resale Price from 2000")
