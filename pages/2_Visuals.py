@@ -187,7 +187,6 @@ index_benchmark = 400000 # price as of Jan 2020
 resale_transactions_df["price_index"] = resale_transactions_df["resale_price"] / index_benchmark * 100
 resale_transactions_df[["resale_price", "price_index"]] = resale_transactions_df[["resale_price", "price_index"]].round(0).astype("int32")
 
-# @st.cache_data(max_entries=10)
 def gen_median_map_plot():
     ## choropleth
     median_map_plot = px.choropleth_mapbox(
@@ -319,7 +318,6 @@ def gen_median_map_plot():
 
     return median_map_plot
 
-# @st.cache_data(max_entries=10)
 def gen_transaction_map_plot():
     transaction_map_plot = px.choropleth_mapbox(
         choropleth_df,
@@ -520,6 +518,7 @@ density_heatmap_plot = px.density_heatmap(
 
 with st.container():
     st.title("Singapore HDB Resale Price from 2000")
+    st.info("Filter Options are available in the side bar.")
 
 with st.container():
     st.markdown(f"## {year_option} transactions in {town_option}")
@@ -602,7 +601,8 @@ with row1_tab2:
     st.plotly_chart(transaction_map_plot, use_container_width=True)
 
 with st.container():
-    row2_tab1, row2_tab2, row2_tab3 = st.tabs(["Resale Price Index", "Median Resale Price", "Million Dollar Flats"])
+    st.altair_chart(transactions_plot,use_container_width=True)
+    row2_tab1, row2_tab2, row2_tab3 = st.tabs(["Resale Price Index", "Median Resale Price", "Million Dollar Transactions"])
     st.markdown("---")
 
 with row2_tab1:
@@ -611,15 +611,12 @@ with row2_tab1:
         resale_price_index_line = alt.Chart(
             resale_transactions_df).mark_rule(color="gray", strokeDash=[4, 4], strokeOpacity=0.1).encode(y=alt.datum(100)
             )
-        st.altair_chart(transactions_plot,use_container_width=True)
         st.altair_chart(price_index_plot + resale_price_index_line,use_container_width=True)
     else:
-        st.altair_chart(transactions_plot, use_container_width=True)
         st.altair_chart(price_index_plot,use_container_width=True)
     st.markdown("^ Base period is taken at Jan 2020 ($400k) across all towns and flat types, with index at 100")
 
 with row2_tab2:
-    st.altair_chart(transactions_plot,use_container_width=True)
     st.altair_chart(median_price_plot,use_container_width=True)
     st.markdown("^ Median price across all flat types and models.")
 
