@@ -1,7 +1,7 @@
 numpy==1.22
 pandas==1.4.4
 regex==2022.7.9
-streamlit==1.18.0
+streamlit==1.22.0
 altair==4.2.0
 plotly==5.11.0
 seaborn==0.11.2
